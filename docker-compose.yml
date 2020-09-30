@@ -1,5 +1,18 @@
 version: "3"
 services:
+  nest-api:
+    container_name: nest-api
+    build:
+      context: .
+    ports:
+      - ${PORT}:${PORT}
+    env_file:
+      - .env
+    networks:
+      - nestjs-order-management
+    depends_on:
+      - postgres
+
   postgres:
     container_name: postgres
     image: postgres:9.5
@@ -10,7 +23,7 @@ services:
     env_file:
       - docker.env
     networks:
-      - postgres
+      - nestjs-order-management
 
   pgadmin:
     links:
@@ -24,8 +37,8 @@ services:
     env_file:
       - docker.env
     networks:
-      - postgres
+      - nestjs-order-management
 
 networks:
-  postgres:
+  nestjs-order-management:
     driver: bridge
