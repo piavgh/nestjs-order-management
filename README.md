@@ -34,6 +34,12 @@
 $ npm install
 ```
 
+## Create Env Files
+```bash
+$ cp .env.example .env
+$ cp docker.env.example docker.env
+```
+
 ## Running the app
 
 ```bash
