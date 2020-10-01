@@ -1,7 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Delete, Param, Query } from '@nestjs/common';
 import OrdersService from './orders.service';
 import CreateOrderDto from './dto/createOrder.dto';
 import UpdateOrderDto from './dto/updateOrder.dto';
+import { PaginationDto } from './dto/pagination.dto';
+import { PaginatedOrdersResultDto } from './dto/paginatedOrdersResult.dto';
 
 @Controller('orders')
 export default class OrdersController {
@@ -10,8 +12,14 @@ export default class OrdersController {
   ) {}
 
   @Get()
-  getAllOrders() {
-    return this.ordersService.getAllOrders();
+  getAllOrders(@Query() paginationDto: PaginationDto): Promise<PaginatedOrdersResultDto> {
+    paginationDto.page = Number(paginationDto.page);
+    paginationDto.limit = Number(paginationDto.limit);
+
+    return this.ordersService.getAllOrders({
+      ...paginationDto,
+      limit: paginationDto.limit > 10 ? 10 : paginationDto.limit,
+    });
   }
 
   @Get(':id')
