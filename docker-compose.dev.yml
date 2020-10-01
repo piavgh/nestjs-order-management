@@ -26,6 +26,14 @@ services:
     networks:
       - nestjs-order-management
 
+  redis:
+    container_name: redis
+    image: redis:6.0
+    ports:
+      - "6379:6379"
+    networks:
+      - nestjs-order-management
+
 networks:
   nestjs-order-management:
     driver: bridge
