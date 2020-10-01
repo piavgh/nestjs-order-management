@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import Order from './order.entity';
 import CreateOrderDto from './dto/createOrder.dto';
 import UpdateOrderDto from './dto/updateOrder.dto';
+import { PaginationDto } from './dto/pagination.dto';
+import { PaginatedOrdersResultDto } from "./dto/paginatedOrdersResult.dto";
 
 @Injectable()
 export default class OrdersService {
@@ -12,8 +14,22 @@ export default class OrdersService {
     private ordersRepository: Repository<Order>,
   ) {}
 
-  getAllOrders() {
-    return this.ordersRepository.find();
+  async getAllOrders(paginationDto: PaginationDto): Promise<PaginatedOrdersResultDto> {
+    const skippedItems = (paginationDto.page - 1) * paginationDto.limit;
+
+    const totalCount = await this.ordersRepository.count()
+    const orders = await this.ordersRepository.createQueryBuilder()
+      .orderBy('id', "DESC")
+      .offset(skippedItems)
+      .limit(paginationDto.limit)
+      .getMany()
+
+    return {
+      totalCount,
+      page: paginationDto.page,
+      limit: paginationDto.limit,
+      data: orders,
+    }
   }
 
   async getOrderById(id: number) {
