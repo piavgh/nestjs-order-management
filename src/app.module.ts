@@ -2,6 +2,7 @@ import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from '@hapi/joi';
 import { DatabaseModule } from './database/database.module';
+import { RedisCacheModule } from "./cache/redisCache.module";
 import { ProductsModule } from './products/products.module';
 import { OrdersModule } from "./orders/orders.module";
 import { AuthenticationMiddleware } from "./middleware/authentication.middleware";
@@ -23,6 +24,7 @@ import { AppService } from './app.service';
       }),
     }),
     DatabaseModule,
+    RedisCacheModule,
   ],
   controllers: [AppController],
   providers: [AppService],
