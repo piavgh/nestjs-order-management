@@ -12,6 +12,7 @@ services:
       - nestjs-order-management
     depends_on:
       - postgres
+      - redis
 
   postgres:
     container_name: postgres
@@ -36,6 +37,14 @@ services:
       - ./data/pgadmin:/root/.pgadmin
     env_file:
       - docker.env
+    networks:
+      - nestjs-order-management
+
+  redis:
+    container_name: redis
+    image: redis:6.0
+    ports:
+      - "6379:6379"
     networks:
       - nestjs-order-management
 
