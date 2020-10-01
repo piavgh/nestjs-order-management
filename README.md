@@ -4,7 +4,7 @@
 
 A simple order management system that is built with Nest.js. It's a place to practice adding Docker, Github Actions, automated testing, deployment ... into your project.
 
-You can easily replace Nest.js with other backend technologies such as Java, Golang, ... for learning purpose.
+You can easily swap Nest.js with other backend technologies such as Java, Golang, Rust (maybe) ... for learning purpose.
 
 ## Quick start
 
