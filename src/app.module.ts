@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from '@hapi/joi';
 import { DatabaseModule } from './database/database.module';
 import { ProductsModule } from './products/products.module';
 import { OrdersModule } from "./orders/orders.module";
+import { AuthenticationMiddleware } from "./middleware/authentication.middleware";
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -26,4 +27,10 @@ import { AppService } from './app.service';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthenticationMiddleware)
+      .forRoutes('products', 'orders');
+  }
+}
