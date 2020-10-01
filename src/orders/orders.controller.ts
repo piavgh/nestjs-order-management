@@ -4,6 +4,7 @@ import CreateOrderDto from './dto/createOrder.dto';
 import UpdateOrderDto from './dto/updateOrder.dto';
 import { PaginationDto } from './dto/pagination.dto';
 import { PaginatedOrdersResultDto } from './dto/paginatedOrdersResult.dto';
+import { FilteringDto } from './dto/filtering.dto';
 
 @Controller('orders')
 export default class OrdersController {
@@ -12,14 +13,19 @@ export default class OrdersController {
   ) {}
 
   @Get()
-  getAllOrders(@Query() paginationDto: PaginationDto): Promise<PaginatedOrdersResultDto> {
+  getAllOrders(
+    @Query() paginationDto: PaginationDto,
+    @Query() filteringDto: FilteringDto
+  ): Promise<PaginatedOrdersResultDto> {
     paginationDto.page = Number(paginationDto.page);
     paginationDto.limit = Number(paginationDto.limit);
 
-    return this.ordersService.getAllOrders({
-      ...paginationDto,
-      limit: paginationDto.limit > 10 ? 10 : paginationDto.limit,
-    });
+    return this.ordersService.getAllOrders(
+      {
+        ...paginationDto,
+        limit: paginationDto.limit > 10 ? 10 : paginationDto.limit,
+      },
+      filteringDto);
   }
 
   @Get(':id')
