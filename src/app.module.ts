@@ -1,18 +1,18 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import * as Joi from '@hapi/joi';
 import { DatabaseModule } from './database/database.module';
 import { RedisCacheModule } from "./cache/redisCache.module";
 import { ProductsModule } from './products/products.module';
 import { OrdersModule } from "./orders/orders.module";
+import { DailyReportModule } from './scheduler/dailyReport.module';
 import { AuthenticationMiddleware } from "./middleware/authentication.middleware";
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 @Module({
   imports: [
-    ProductsModule,
-    OrdersModule,
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         POSTGRES_HOST: Joi.string().required(),
@@ -23,8 +23,12 @@ import { AppService } from './app.service';
         PORT: Joi.number(),
       }),
     }),
+    ScheduleModule.forRoot(),
     DatabaseModule,
     RedisCacheModule,
+    ProductsModule,
+    OrdersModule,
+    DailyReportModule,
   ],
   controllers: [AppController],
   providers: [AppService],
