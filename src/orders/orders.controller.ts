@@ -17,8 +17,8 @@ export default class OrdersController {
     @Query() paginationDto: PaginationDto,
     @Query() filteringDto: FilteringDto
   ): Promise<PaginatedOrdersResultDto> {
-    paginationDto.page = Number(paginationDto.page);
-    paginationDto.limit = Number(paginationDto.limit);
+    paginationDto.page = paginationDto.page ? Number(paginationDto.page) : 1;
+    paginationDto.limit = paginationDto.limit ? Number(paginationDto.limit) : 10;
 
     return this.ordersService.getAllOrders(
       {
