@@ -1,11 +1,12 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import Order from './order.entity';
 import CreateOrderDto from './dto/createOrder.dto';
 import UpdateOrderDto from './dto/updateOrder.dto';
 import { PaginationDto } from './dto/pagination.dto';
 import { PaginatedOrdersResultDto } from "./dto/paginatedOrdersResult.dto";
+import { FilteringDto } from './dto/filtering.dto';
 
 @Injectable()
 export default class OrdersService {
@@ -14,15 +15,56 @@ export default class OrdersService {
     private ordersRepository: Repository<Order>,
   ) {}
 
-  async getAllOrders(paginationDto: PaginationDto): Promise<PaginatedOrdersResultDto> {
+  private static getFilterQuery(
+    filteringDto: FilteringDto,
+    ordersQueryBuilder: SelectQueryBuilder<Order>
+  ): SelectQueryBuilder<Order> {
+    let ordersFilterQuery = ordersQueryBuilder;
+
+    if (filteringDto.id) {
+      ordersFilterQuery = ordersQueryBuilder
+        .where('orders.id = :id', {
+          id: filteringDto.id,
+        });
+    }
+
+    if (filteringDto.orderCode) {
+      ordersFilterQuery = ordersFilterQuery
+        .andWhere('orders.orderCode = :orderCode', {
+          orderCode: filteringDto.orderCode,
+        });
+    }
+
+    if (filteringDto.orderType) {
+      ordersFilterQuery = ordersFilterQuery
+        .andWhere('orders.orderType = :orderType', {
+          orderType: filteringDto.orderType,
+        });
+    }
+
+    if (filteringDto.orderStatus) {
+      ordersFilterQuery = ordersFilterQuery
+        .andWhere('orders.orderStatus = :orderStatus', {
+          orderStatus: filteringDto.orderStatus,
+        });
+    }
+
+    return ordersFilterQuery;
+  }
+
+  async getAllOrders(paginationDto: PaginationDto, filteringDto: FilteringDto): Promise<PaginatedOrdersResultDto> {
     const skippedItems = (paginationDto.page - 1) * paginationDto.limit;
 
     const totalCount = await this.ordersRepository.count()
-    const orders = await this.ordersRepository.createQueryBuilder()
-      .orderBy('id', "DESC")
+    const ordersQueryBuilder = this.ordersRepository.createQueryBuilder('orders');
+
+    const ordersFilterQuery = OrdersService.getFilterQuery(filteringDto, ordersQueryBuilder);
+
+    const orders = await ordersFilterQuery
+      .orderBy('id', 'DESC')
       .offset(skippedItems)
       .limit(paginationDto.limit)
-      .getMany()
+      .getMany();
 
     return {
       totalCount,
