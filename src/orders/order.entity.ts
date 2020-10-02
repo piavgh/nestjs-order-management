@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
 
 @Entity({ name: 'orders' })
 class Order {
@@ -22,6 +22,12 @@ class Order {
 
     @Column({ name: 'total_price' })
     public totalPrice: number;
+
+    @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+    public createdAt: Date;
+
+    @CreateDateColumn({ name: 'updated_at', type: 'timestamp' })
+    public updatedAt: Date;
 }
 
 export default Order;
