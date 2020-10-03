@@ -30,6 +30,7 @@
     "@nestjs/typeorm": "^7.1.4",
     "cache-manager": "^3.4.0",
     "cache-manager-redis-store": "^2.0.0",
+    "date-fns": "^2.16.1",
     "pg": "^8.3.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
