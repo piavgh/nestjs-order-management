@@ -10,7 +10,7 @@ export class DailyReportService {
     private readonly redisCacheService: RedisCacheService,
   ) {}
 
-  @Cron('0 0 0 * * *')
+  @Cron('0 1 0 * * *') // Run cron job at 00:01:00 everyday
   async handleCacheDailyReport() {
     this.logger.debug('Handle cache to Redis');
   }
