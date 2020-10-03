@@ -7,6 +7,7 @@ import { RedisCacheModule } from "./cache/redisCache.module";
 import { ProductsModule } from './products/products.module';
 import { OrdersModule } from "./orders/orders.module";
 import { DailyReportModule } from './scheduler/dailyReport.module';
+import { ReportModule } from './report/report.module';
 import { AuthenticationMiddleware } from "./middleware/authentication.middleware";
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -29,6 +30,7 @@ import { AppService } from './app.service';
     ProductsModule,
     OrdersModule,
     DailyReportModule,
+    ReportModule,
   ],
   controllers: [AppController],
   providers: [AppService],
