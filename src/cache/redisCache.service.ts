@@ -12,6 +12,6 @@ export class RedisCacheService {
   }
 
   async set(key, value) {
-    await this.cache.set(key, value, { ttl: 3600 });
+    await this.cache.set(key, value);
   }
 }
