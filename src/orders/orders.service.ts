@@ -103,4 +103,13 @@ export default class OrdersService {
       throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
     }
   }
+
+  async queryDailyReport() {
+    const dailyReport = this.ordersRepository.createQueryBuilder('orders')
+      .select('SUM(orders.totalPrice)', 'revenue')
+      .addSelect('COUNT(orders.orderCode)', 'numberOfOrders')
+      .getRawOne();
+
+    return dailyReport;
+  }
 }
