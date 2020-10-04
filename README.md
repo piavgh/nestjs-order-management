@@ -12,6 +12,7 @@ If you want to quickly run this project on localhost, run these commands:
 
 ```bash
 $ npm install
+$ npm run build # to generate Swagger documetation, see the section below
 $ cp .env.example .env
 $ cp docker.env.example docker.env
 $ docker-compose up -d
@@ -32,6 +33,18 @@ After that, you run the Nest.js app separately using `npm run start:dev` (for ho
 ```bash
 $ npm install
 ```
+
+### Generate the Swagger API Documentation
+
+```bash
+$ npm run build
+```
+
+After that, the API documentation will be available at http://localhost:3000/swagger
+
+I use Nest.js CLI to generate the API documentation automatically.
+
+For more information, you can check this section: https://docs.nestjs.com/openapi/cli-plugin
 
 ### Create Env Files
 ```bash
