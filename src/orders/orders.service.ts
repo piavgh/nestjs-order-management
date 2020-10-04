@@ -104,10 +104,14 @@ export default class OrdersService {
     }
   }
 
-  async queryDailyReport() {
+  async queryDailyReport(reportDate: string) {
+    const start = `${reportDate} 00:00:00`;
+    const end = `${reportDate} 23:59:59`;
+
     const dailyReport = this.ordersRepository.createQueryBuilder('orders')
       .select('SUM(orders.totalPrice)', 'revenue')
       .addSelect('COUNT(orders.orderCode)', 'numberOfOrders')
+      .where(`orders.updatedAt BETWEEN '${start}' AND '${end}'`)
       .getRawOne();
 
     return dailyReport;

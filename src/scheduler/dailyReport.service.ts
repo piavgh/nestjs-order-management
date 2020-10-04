@@ -13,7 +13,7 @@ export class DailyReportService {
     private readonly ordersService: OrdersService,
   ) {}
 
-  private static getReportDate() {
+  private static getReportDate(): string {
     const today = new Date();
     const yesterday = new Date();
 
@@ -26,10 +26,12 @@ export class DailyReportService {
   async handleCacheDailyReport() {
     this.logger.debug('Caching daily report to Redis');
 
-    const dailyReport = await this.ordersService.queryDailyReport();
+    const reportDate = DailyReportService.getReportDate();
+
+    const dailyReport = await this.ordersService.queryDailyReport(reportDate);
 
     await this.redisCacheService.set(
-      DailyReportService.getReportDate(),
+      reportDate,
       dailyReport,
     );
   }
