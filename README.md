@@ -6,6 +6,14 @@ A simple order management system that is built with Nest.js. It's a place to pra
 
 You can easily swap Nest.js with other backend technologies such as Java, Golang, Rust (maybe) ... for learning purpose.
 
+## Things to improve
+
+- [ ] Optimize query to get number of products for daily report
+- [ ] Optimize query to get most sales product for daily report
+- [ ] Test coverage
+- [ ] DTO validation (before saving into database)
+- [ ] Validate API request parameters
+
 ## Quick start
 
 If you want to quickly run this project on localhost, run these commands:
