@@ -104,10 +104,16 @@ export default class OrdersService {
     }
   }
 
+  /**
+   * TODO: Optimize these shitty queries
+   *
+   * @param reportDate
+   */
   async queryDailyReport(reportDate: string) {
     const start = `${reportDate} 00:00:00`;
     const end = `${reportDate} 23:59:59`;
 
+    // Get revenue (1) and number of orders (2)
     const ordersReport = await this.ordersRepository.createQueryBuilder('orders')
       .select('SUM(orders.totalPrice)', 'revenue')
       .addSelect('COUNT(orders.orderCode)', 'numberOfOrders')
@@ -119,13 +125,36 @@ export default class OrdersService {
       .innerJoin('products', 'products', "products.product_code = ANY (Order.products)")
       .where(`updated_at BETWEEN '${start}' AND '${end}'`);
 
+    // Get number of products (3)
     const numberOfProducts = await getManager().createQueryBuilder()
       .select("SUM(quantity)", "totalProducts")
       .from("(" + joinTableQb.getQuery() + ")", "joinTable")
       .getRawOne();
 
-    const dailyReport = { ...ordersReport, ...numberOfProducts };
+    const quantityByProductQb = getManager().createQueryBuilder()
+      .select("product_code", "product_code")
+      .addSelect("updated_at", "updated_at")
+      .addSelect("SUM(quantity)", "sum_quantity")
+      .from("(" + joinTableQb.getQuery() + ")", "joinTable")
+      .groupBy('product_code')
+      .addGroupBy('updated_at');
 
-    return dailyReport;
+    // Get product with most sales (4)
+    const mostSalesProductQb = await getManager().createQueryBuilder()
+      .select("product_code", "product_code")
+      .addSelect("sum_quantity", "max_quantity")
+      .from("(" + quantityByProductQb.getQuery() + ")", "quantityByProduct")
+      .groupBy('product_code')
+      .addGroupBy('sum_quantity')
+      .orderBy('sum_quantity', 'DESC')
+      .limit(1);
+
+    const mostSalesProduct = await mostSalesProductQb.getRawOne();
+
+    return {
+      ...ordersReport,
+      ...numberOfProducts,
+      ...mostSalesProduct,
+    };
   }
 }
