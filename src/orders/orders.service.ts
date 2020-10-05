@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { getManager, Repository, SelectQueryBuilder } from 'typeorm';
 import Order from './order.entity';
 import CreateOrderDto from './dto/createOrder.dto';
 import UpdateOrderDto from './dto/updateOrder.dto';
@@ -108,11 +108,23 @@ export default class OrdersService {
     const start = `${reportDate} 00:00:00`;
     const end = `${reportDate} 23:59:59`;
 
-    const dailyReport = this.ordersRepository.createQueryBuilder('orders')
+    const ordersReport = await this.ordersRepository.createQueryBuilder('orders')
       .select('SUM(orders.totalPrice)', 'revenue')
       .addSelect('COUNT(orders.orderCode)', 'numberOfOrders')
       .where(`orders.updatedAt BETWEEN '${start}' AND '${end}'`)
       .getRawOne();
+
+    const joinTableQb = this.ordersRepository.createQueryBuilder()
+      .select('*')
+      .innerJoin('products', 'products', "products.product_code = ANY (Order.products)")
+      .where(`updated_at BETWEEN '${start}' AND '${end}'`);
+
+    const numberOfProducts = await getManager().createQueryBuilder()
+      .select("SUM(quantity)", "totalProducts")
+      .from("(" + joinTableQb.getQuery() + ")", "joinTable")
+      .getRawOne();
+
+    const dailyReport = { ...ordersReport, ...numberOfProducts };
 
     return dailyReport;
   }
