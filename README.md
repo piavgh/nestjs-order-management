@@ -10,6 +10,7 @@ You can easily swap Nest.js with other backend technologies such as Java, Golang
 
 - [ ] Optimize query to get number of products for daily report
 - [ ] Optimize query to get most sales product for daily report
+- [ ] Timezone issue when generating the daily report cache
 - [ ] Test coverage
 - [ ] DTO validation (before saving into database)
 - [ ] Validate API request parameters
